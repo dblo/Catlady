@@ -69,10 +69,9 @@ public class Player : MonoBehaviour
 
     private void PickUp()
     {
-        //int layerMask = LayerMask.GetMask("Boxes");
         var raycastPos = transform.position + transform.forward;
         RaycastHit2D hit = Physics2D.Raycast(raycastPos, transform.forward, 0.2f);
-        if (hit.collider != null && hit.collider.gameObject.tag == "Box")
+        if (!IsCarrying() && hit.collider.gameObject.tag == "Box")
         {
             carriedBox = hit.collider.gameObject;
             carriedBox.GetComponent<BoxCollider2D>().enabled = false;
@@ -81,12 +80,17 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnCollisionEnter2D(Collision2D coll)
+    public void OnCollisionStay2D(Collision2D coll)
     {
-        if (coll.gameObject.tag == "Bed")
+        if (coll.gameObject.tag == "Bed" && !IsCarrying())
         {
             gm.PlayerWentToBed();
         }
+    }
+
+    private bool IsCarrying()
+    {
+        return carriedBox != null;
     }
 
     public void OnTriggerEnter2D(Collider2D collision)
