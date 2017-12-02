@@ -12,6 +12,7 @@ public class Mission : MonoBehaviour
     private System.Random rng = new System.Random();
     private float timer = -1;
     private int currentTimerInt;
+    private bool missionOngoing = false;
 
     enum MissionType { North, East, South, West, Bed, None };
 
@@ -27,6 +28,7 @@ public class Mission : MonoBehaviour
         timer = missionTime;
         currentTimerInt = (int)(timer);
         timerText.text = currentTimerInt.ToString();
+        missionOngoing = true;
     }
 
     private int GetDifferentMission()
@@ -38,7 +40,7 @@ public class Mission : MonoBehaviour
 
     private void Update()
     {
-        if (timer >= 0)
+        if (timer >= 0 && missionOngoing)
         {
             timer -= Time.deltaTime;
 
@@ -63,6 +65,7 @@ public class Mission : MonoBehaviour
         if (currentMission != MissionType.Bed)
             missionPoints[(int)currentMission].gameObject.SetActive(false);
         missionText.text = "";
+        missionOngoing = false;
     }
 
     internal bool MissionCompleted()
@@ -71,13 +74,8 @@ public class Mission : MonoBehaviour
 
         if (currentMission != MissionType.Bed)
             missionPoints[(int)currentMission].gameObject.SetActive(false);
-        currentMission = MissionType.None;
         missionText.text = currentMission.ToString();
-
-        if (timer <= 0)
-            return false;
-
-        timer = -1; // Freeze timer
+        missionOngoing = false;
         return true;
     }
 

@@ -12,12 +12,15 @@ public class GameManager : MonoBehaviour
     private int missionCounter = 0;
     public int missionPerLevel = 2;
     private Mission currentMission;
+    public NightTime nightPanel;
 
     internal void PlayerReachedMissionPoint()
     {
-        currentMission.MissionCompleted();
-        missionCounter--;
-        NewMission();
+        if (currentMission.MissionCompleted())
+        {
+            missionCounter--;
+            NewMission();
+        }
     }
 
     internal void PlayerWentToBed()
@@ -37,6 +40,13 @@ public class GameManager : MonoBehaviour
 
     private void SleepScreen()
     {
+        nightPanel.gameObject.SetActive(true);
+        nightPanel.Show(level);
+    }
+
+    void Start()
+    {
+        SleepScreen();
     }
 
     void Awake()
@@ -44,7 +54,7 @@ public class GameManager : MonoBehaviour
         currentMission = GetComponent<Mission>();
     }
 
-    private void StartNextLevel()
+    internal void StartNextLevel()
     {
         level++;
         missionCounter = missionPerLevel;
@@ -74,13 +84,5 @@ public class GameManager : MonoBehaviour
     private void SpawnBoxes()
     {
 
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            StartNextLevel();
-        }
     }
 }
