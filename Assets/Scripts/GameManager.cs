@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public int missionPerLevel = 2;
     private Mission currentMission;
     public NightTime nightPanel;
-
+    
     internal void PlayerReachedMissionPoint()
     {
         if (currentMission.MissionCompleted())
@@ -61,6 +61,15 @@ public class GameManager : MonoBehaviour
         SpawnBoxes();
         ActivatePlayer();
         NewMission();
+    }
+
+    internal Vector2 GetTileGridPosNearest(Vector3 vector3)
+    {
+        var res = new Vector2();
+
+
+
+        return res;
     }
 
     private void NewMission()
