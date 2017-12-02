@@ -11,14 +11,12 @@ public class GameManager : MonoBehaviour
     public Transform spwanPoint;
     private int missionCounter = 0;
     public int missionPerLevel = 2;
-    public int missionTimer;
     private Mission currentMission;
 
     internal void PlayerReachedMissionPoint()
     {
         currentMission.MissionCompleted();
         missionCounter--;
-        //StartCoroutine(NewMission());
         NewMission();
     }
 
@@ -52,21 +50,18 @@ public class GameManager : MonoBehaviour
         missionCounter = missionPerLevel;
         SpawnBoxes();
         ActivatePlayer();
-        //StartCoroutine(NewMission());
         NewMission();
     }
 
     private void NewMission()
     {
-        //If enable wait, handle player reaching bed before new mission is given
+        //If enabling wait, handle player reaching bed before new mission is given
         //yield return new WaitForSeconds(1);
         if (missionCounter == 0)
             currentMission.BedMission();
         else
         {
-            
             currentMission.NewMission();
-            missionTimer = 10;
         }
     }
 
