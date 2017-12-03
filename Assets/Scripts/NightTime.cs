@@ -11,8 +11,8 @@ public class NightTime : MonoBehaviour {
 
     internal void Show(int currentlevel)
     {
-        int newLevel = currentlevel++;
-        levelText.text = "Level " + newLevel.ToString();
+        int newLevel = currentlevel + 1;
+        levelText.text = "Day " + newLevel.ToString();
         StartCoroutine(ShowContinueDelayed());
     }
 

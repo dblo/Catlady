@@ -14,22 +14,22 @@ public class Player : MonoBehaviour
             modifiedSpeed /= 2;
         Vector3 facing = new Vector2();
 
-        if (Input.GetKey("w"))
+        if (Input.GetKey("w") || Input.GetKey(KeyCode.UpArrow))
         {
             transform.position += new Vector3(0, modifiedSpeed);
             facing.y = 1;
         }
-        else if (Input.GetKey("s"))
+        else if (Input.GetKey("s") || Input.GetKey(KeyCode.DownArrow))
         {
             transform.position += new Vector3(0, -modifiedSpeed);
             facing.y = -1;
         }
-        if (Input.GetKey("a"))
+        if (Input.GetKey("a") || Input.GetKey(KeyCode.LeftArrow))
         {
             transform.position += new Vector3(-modifiedSpeed, 0);
             facing.x = -1;
         }
-        else if (Input.GetKey("d"))
+        else if (Input.GetKey("d") || Input.GetKey(KeyCode.RightArrow))
         {
             transform.position += new Vector3(modifiedSpeed, 0);
             facing.x = 1;
@@ -37,7 +37,9 @@ public class Player : MonoBehaviour
 
         transform.LookAt(transform.position + facing);
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) ||
+            Input.GetKeyDown(KeyCode.LeftControl) ||
+            Input.GetKeyDown(KeyCode.RightControl))
         {
             if (carriedBox != null)
                 Drop();
@@ -71,13 +73,13 @@ public class Player : MonoBehaviour
     {
         var raycastPos = transform.position + transform.forward;
         RaycastHit2D hit = Physics2D.Raycast(raycastPos, transform.forward, 0.2f);
-        if (!IsCarrying() && hit.collider.gameObject.tag == "Box")
-        {
-            carriedBox = hit.collider.gameObject;
-            carriedBox.GetComponent<BoxCollider2D>().enabled = false;
-            carriedBox.transform.parent = transform;
-            carriedBox.transform.position = transform.position;
-        }
+        if (!IsCarrying() && hit.collider != null && hit.collider.gameObject.tag == "Box")
+            {
+                carriedBox = hit.collider.gameObject;
+                carriedBox.GetComponent<BoxCollider2D>().enabled = false;
+                carriedBox.transform.parent = transform;
+                carriedBox.transform.position = transform.position;
+            }
     }
 
     public void OnCollisionStay2D(Collision2D coll)

@@ -11,12 +11,14 @@ public class GameManager : MonoBehaviour
     public Transform spwanPoint;
     private int missionCounter = 0;
     public int missionPerLevel = 2;
-    private Mission currentMission;
+    private Mission mission;
     public NightTime nightPanel;
-    
+    private GameBoard gameBoard;
+    private readonly int ADDED_BOXES_PER_LEVEL = 4;
+
     internal void PlayerReachedMissionPoint()
     {
-        if (currentMission.MissionCompleted())
+        if (mission.MissionCompleted())
         {
             missionCounter--;
             NewMission();
@@ -27,7 +29,7 @@ public class GameManager : MonoBehaviour
     {
         if (missionCounter == 0)
         {
-            currentMission.MissionCompleted();
+            mission.MissionCompleted();
             OnLevelComplete();
         }
     }
@@ -51,36 +53,29 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        currentMission = GetComponent<Mission>();
+        mission = GetComponent<Mission>();
+        gameBoard = GetComponent<GameBoard>();
     }
 
     internal void StartNextLevel()
     {
         level++;
         missionCounter = missionPerLevel;
-        SpawnBoxes();
+        MoveBoxes();
+        gameBoard.AddBoxes(ADDED_BOXES_PER_LEVEL);
         ActivatePlayer();
         NewMission();
-    }
-
-    internal Vector2 GetTileGridPosNearest(Vector3 vector3)
-    {
-        var res = new Vector2();
-
-
-
-        return res;
     }
 
     private void NewMission()
     {
         //If enabling wait, handle player reaching bed before new mission is given
         //yield return new WaitForSeconds(1);
-        if (missionCounter == 0)
-            currentMission.BedMission();
+        if (missionCounter <= 0)
+            mission.BedMission();
         else
         {
-            currentMission.NewMission();
+            mission.NewMission();
         }
     }
 
@@ -90,8 +85,20 @@ public class GameManager : MonoBehaviour
         player.transform.position = spwanPoint.position;
     }
 
-    private void SpawnBoxes()
-    {
+    //private void SpawnBoxes()
+    //{
+    //    var emptyTiles = gameBoard.GetEmptyTiles();
+    //    Debug.Assert(gameBoard.GetBoxCount() == (--level * ADDED_BOXES_PER_LEVEL));
+    //    System.Random rng = new System.Random();
 
+    //    for (int i = 0; i < ADDED_BOXES_PER_LEVEL; i++)
+    //    {
+    //        var randVal = rng.Next(0, emptyTiles.Count);
+    //        gameBoard.AddBox()
+    //    }
+    //}
+
+    private void MoveBoxes()
+    {
     }
 }

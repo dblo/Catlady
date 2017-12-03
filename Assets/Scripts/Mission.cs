@@ -21,11 +21,22 @@ public class Mission : MonoBehaviour
         int newMission = GetDifferentMission();
         Debug.Assert(newMission != (int)currentMission);
 
-        currentMission = (MissionType) newMission;
+        currentMission = (MissionType)newMission;
         missionPoints[(int)currentMission].gameObject.SetActive(true);
         missionText.text = currentMission.ToString();
 
         timer = missionTime;
+        currentTimerInt = (int)(timer);
+        timerText.text = currentTimerInt.ToString();
+        missionOngoing = true;
+    }
+
+    internal void BedMission()
+    {
+        currentMission = MissionType.Bed;
+        missionText.text = "I'm sleepy...";
+
+        timer = missionTime * 2;
         currentTimerInt = (int)(timer);
         timerText.text = currentTimerInt.ToString();
         missionOngoing = true;
@@ -44,10 +55,14 @@ public class Mission : MonoBehaviour
         {
             timer -= Time.deltaTime;
 
-            if(timer <= 0)
+            if (timer <= 0)
             {
                 MissionFailed();
-                NewMission();
+
+                if (currentMission == MissionType.Bed)
+                    BedMission();
+                else
+                    NewMission();
             }
 
             if ((int)timer < currentTimerInt)
@@ -77,11 +92,5 @@ public class Mission : MonoBehaviour
         missionText.text = currentMission.ToString();
         missionOngoing = false;
         return true;
-    }
-
-    internal void BedMission()
-    {
-        currentMission = MissionType.Bed;
-        missionText.text = "I'm sleepy...";
     }
 }
