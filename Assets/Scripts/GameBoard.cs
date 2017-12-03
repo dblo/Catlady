@@ -9,7 +9,7 @@ public class GameBoard : MonoBehaviour
     public int height;
     private GameObject[,] board;
     private int currentBoxCount;
-    private int currentBedCount;
+    private int currentBedCount; //Bed tiles, not number of beds
     private int currentWindowCount;
     private int currentWallCount;
     public GameObject BoxPrefab;
@@ -48,8 +48,13 @@ public class GameBoard : MonoBehaviour
         }
 
         GameObject bed = GameObject.FindGameObjectWithTag("Bed");
-        board[1, 1] = board[1, 2] = bed;
+        board[xOffset - 1, yOffset + 3] = board[xOffset - 1, yOffset + 4] = bed;
         currentBedCount += 2;
+
+        GameObject respawn = GameObject.FindGameObjectWithTag("Respawn");
+        int xr = (int)respawn.transform.position.x + xOffset;
+        int yr = (int)respawn.transform.position.y + yOffset;
+        board[xr, yr] = respawn;
     }
 
     Vector2 BoardToGameCoordinates(int col, int row)
@@ -62,7 +67,7 @@ public class GameBoard : MonoBehaviour
     private int GetEmptyTileCount()
     {
         return width * height - currentBedCount - currentBoxCount -
-            currentWallCount - currentWindowCount;
+            currentWallCount - currentWindowCount - 1; //1=respawn
     }
 
     private int GetTileCount()
