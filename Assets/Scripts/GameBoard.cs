@@ -13,13 +13,19 @@ public class GameBoard : MonoBehaviour
     private int currentWindowCount;
     private int currentWallCount;
     public GameObject BoxPrefab;
+    private System.Random rng = new System.Random();
+    private int xOffset;
+    private int yOffset;
+
+    void Awake()
+    {
+        board = new GameObject[width, height];
+        xOffset = width / 2;
+        yOffset = height / 2;
+    }
 
     void Start()
     {
-        board = new GameObject[width, height];
-        var xOffset = width / 2;
-        var yOffset = height / 2;
-
         var walls = GameObject.FindGameObjectsWithTag("Wall");
         foreach (var wall in walls)
         {
@@ -57,11 +63,71 @@ public class GameBoard : MonoBehaviour
         board[xr, yr] = respawn;
     }
 
-    Vector2 BoardToGameCoordinates(int col, int row)
+    internal Vector2 GetRandomWorldCoordWithinOuterWalls()
     {
-        var colOffset = width / 2;
-        var rowOffset = height / 2;
-        return new Vector2(col - colOffset, row - rowOffset);
+        int col = rng.Next(-xOffset + 1, xOffset - 1);
+        int row = rng.Next(-yOffset + 1, yOffset - 1);
+        return new Vector2(col, row);
+    }
+
+    private bool ValidBoardCoord(int x, int y)
+    {
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
+
+    internal void TryMoveNearbyBox(int x, int y)
+    {
+        var boardCoord = GameToBoardCoordinate(x, y);
+        int boxX = -1, boxY = -1, emptyX = -1, emptyY = -1;
+
+        for (int i = (int)boardCoord.x - 1; i < (int)boardCoord.x + 1; i++)
+        {
+            for (int j = (int)boardCoord.y - 1; j < (int)boardCoord.y + 1; j++)
+            {
+                if(!ValidBoardCoord(i, j))
+                    continue;
+
+                if (board[i, j] == null)
+                {
+                    emptyX = i;
+                    emptyY = j;
+
+                    if (boxX >= 0) // how is this not equiv to boxX > -1?
+                    {
+                        SwapWithEmpty(emptyX, emptyY, boxX, boxY);
+                        return;
+                    }
+                }
+                else if (board[i, j].tag == "Box")
+                {
+                    boxX = i;
+                    boxY = j;
+
+                    if(emptyX >= 0)
+                    {
+                        SwapWithEmpty(emptyX, emptyY, boxX, boxY);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    private void SwapWithEmpty(int emptyX, int emptyY, int boxX, int boxY)
+    {
+        board[emptyY, emptyY] = board[boxX, boxY];
+        board[emptyY, emptyY].transform.position = BoardToGameCoordinate(emptyX, emptyY);
+        board[boxX, boxY] = null;
+    }
+
+    public Vector2 BoardToGameCoordinate(int col, int row)
+    {
+        return new Vector2(col - xOffset, row - yOffset);
+    }
+
+    Vector2 GameToBoardCoordinate(int col, int row)
+    {
+        return new Vector2(col + xOffset, row + yOffset);
     }
 
     private int GetEmptyTileCount()
@@ -101,7 +167,7 @@ public class GameBoard : MonoBehaviour
                 if (counter == (int)iter.Current)
                 {
                     Debug.Assert(board[i, j] == null);
-                    var instaPos = BoardToGameCoordinates(i, j);
+                    var instaPos = BoardToGameCoordinate(i, j);
                     board[i, j] = Instantiate(BoxPrefab,
                         instaPos, Quaternion.identity);
 

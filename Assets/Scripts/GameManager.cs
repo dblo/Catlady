@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public int level = 0;
     public Player player;
+    public GameObject catPrefab;
     public Transform spwanPoint;
     private int missionCounter = 0;
     public int missionPerLevel = 2;
@@ -20,6 +22,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        nightPanel.gameObject.SetActive(true);
         mission = GetComponent<Mission>();
         gameBoard = GetComponent<GameBoard>();
     }
@@ -32,7 +35,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if(!inMenus)
+        if (!inMenus)
         {
             playTime += Time.deltaTime;
         }
@@ -53,7 +56,7 @@ public class GameManager : MonoBehaviour
         UpdateLifesText();
         if (lifes > 0)
             return true;
-        
+
         GameOver();
         return false;
     }
@@ -96,11 +99,16 @@ public class GameManager : MonoBehaviour
     {
         level++;
         missionCounter = missionPerLevel;
-        MoveBoxes();
         gameBoard.AddBoxes(boxesAddedPerLevel);
         ActivatePlayer();
         NewMission();
         inMenus = false;
+
+        if (level > 1) //No cat on lvl 1
+        {
+            Vector3 spawnPos = gameBoard.GetRandomWorldCoordWithinOuterWalls();
+            Instantiate(catPrefab, spawnPos, Quaternion.identity);
+        }
     }
 
     private void NewMission()
@@ -119,22 +127,5 @@ public class GameManager : MonoBehaviour
     {
         player.gameObject.SetActive(true);
         player.transform.position = spwanPoint.position;
-    }
-
-    //private void SpawnBoxes()
-    //{
-    //    var emptyTiles = gameBoard.GetEmptyTiles();
-    //    Debug.Assert(gameBoard.GetBoxCount() == (--level * ADDED_BOXES_PER_LEVEL));
-    //    System.Random rng = new System.Random();
-
-    //    for (int i = 0; i < ADDED_BOXES_PER_LEVEL; i++)
-    //    {
-    //        var randVal = rng.Next(0, emptyTiles.Count);
-    //        gameBoard.AddBox()
-    //    }
-    //}
-
-    private void MoveBoxes()
-    {
     }
 }

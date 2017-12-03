@@ -14,6 +14,7 @@ public class Mission : MonoBehaviour
     private int currentTimerInt;
     private bool missionOngoing = false;
     private GameManager gm;
+    public Player player;
 
     enum MissionType { North, East, South, West, Bed, None };
 
