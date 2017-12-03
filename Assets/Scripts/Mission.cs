@@ -7,7 +7,6 @@ public class Mission : MonoBehaviour
     public GameObject[] missionPoints;
     public Text missionText;
     public Text timerText;
-    public int missionTime;
     private MissionType currentMission = MissionType.None;
     private System.Random rng = new System.Random();
     private float timer = -1;
@@ -32,7 +31,7 @@ public class Mission : MonoBehaviour
         missionPoints[(int)currentMission].gameObject.SetActive(true);
         missionText.text = currentMission.ToString();
 
-        timer = missionTime;
+        timer = gm.GetMissionTime();
         currentTimerInt = (int)(timer);
         timerText.text = currentTimerInt.ToString();
         missionOngoing = true;
@@ -43,7 +42,7 @@ public class Mission : MonoBehaviour
         currentMission = MissionType.Bed;
         missionText.text = "I'm sleepy...";
 
-        timer = missionTime * 2;
+        timer = gm.GetMissionTime() * 2;
         currentTimerInt = (int)(timer);
         timerText.text = currentTimerInt.ToString();
         missionOngoing = true;

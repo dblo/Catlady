@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -59,6 +60,15 @@ public class GameManager : MonoBehaviour
 
         GameOver();
         return false;
+    }
+
+    internal int GetMissionTime()
+    {
+        if (level > 3)
+            return 8;
+        else if (level > 1)
+            return 12;
+        return 20;
     }
 
     private void GameOver()

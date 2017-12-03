@@ -86,9 +86,9 @@ public class Player : MonoBehaviour
             {
                 carriedBox = hit.collider.gameObject;
                 carriedBox.GetComponent<BoxCollider2D>().enabled = false;
-                carriedBox.transform.parent = transform;
                 carriedBox.transform.position = transform.position;
-            }
+                carriedBox.transform.parent = transform;
+        }
     }
 
     public void OnCollisionStay2D(Collision2D coll)

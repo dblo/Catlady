@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Cat : MonoBehaviour
 {
@@ -8,9 +9,12 @@ public class Cat : MonoBehaviour
     private readonly System.Random rng = new System.Random();
     private float moveBoxCooldown;
     public float mischiefCD;
+    public AudioClip[] catClips;
+    private AudioSource audioSource;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         board = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameBoard>();
         GetNewDestination();
         moveBoxCooldown = mischiefCD;
@@ -46,8 +50,18 @@ public class Cat : MonoBehaviour
         {
             int x = (int)transform.position.x;
             int y = (int)transform.position.y;
-            board.TryMoveNearbyBox(x, y);
+
+            if(board.TryMoveNearbyBox(x, y))
+            {
+                PlaySounds();
+            }
         }
         return false;
+    }
+
+    private void PlaySounds()
+    {
+        audioSource.clip = catClips[rng.Next(catClips.Length)];
+        audioSource.Play();
     }
 }

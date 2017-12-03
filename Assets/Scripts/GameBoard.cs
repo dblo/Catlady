@@ -75,7 +75,7 @@ public class GameBoard : MonoBehaviour
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
-    internal void TryMoveNearbyBox(int x, int y)
+    internal bool TryMoveNearbyBox(int x, int y)
     {
         var boardCoord = GameToBoardCoordinate(x, y);
         int boxX = -1, boxY = -1, emptyX = -1, emptyY = -1;
@@ -95,7 +95,7 @@ public class GameBoard : MonoBehaviour
                     if (boxX >= 0) // how is this not equiv to boxX > -1?
                     {
                         SwapWithEmpty(emptyX, emptyY, boxX, boxY);
-                        return;
+                        return true;
                     }
                 }
                 else if (board[i, j].tag == "Box")
@@ -106,11 +106,12 @@ public class GameBoard : MonoBehaviour
                     if(emptyX >= 0)
                     {
                         SwapWithEmpty(emptyX, emptyY, boxX, boxY);
-                        return;
+                        return true;
                     }
                 }
             }
         }
+        return false;
     }
 
     private void SwapWithEmpty(int emptyX, int emptyY, int boxX, int boxY)
