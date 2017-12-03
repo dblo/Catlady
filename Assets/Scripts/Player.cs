@@ -6,14 +6,21 @@ public class Player : MonoBehaviour
     public GameManager gm;
     private GameObject carriedBox;
     public float movementSpeed;
+    private SpriteRenderer spriteRenderer;
+    Vector3 facing;
+
+    void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
 
     void Update()
     {
         float modifiedSpeed = movementSpeed;
         if (carriedBox != null)
             modifiedSpeed /= 2;
-        Vector3 facing = new Vector2();
 
+        facing = new Vector2();
         if (Input.GetKey("w") || Input.GetKey(KeyCode.UpArrow))
         {
             transform.position += new Vector3(0, modifiedSpeed);
@@ -28,14 +35,16 @@ public class Player : MonoBehaviour
         {
             transform.position += new Vector3(-modifiedSpeed, 0);
             facing.x = -1;
+            spriteRenderer.flipX = false;
         }
         else if (Input.GetKey("d") || Input.GetKey(KeyCode.RightArrow))
         {
             transform.position += new Vector3(modifiedSpeed, 0);
             facing.x = 1;
+            spriteRenderer.flipX = true;
         }
 
-        transform.LookAt(transform.position + facing);
+        //transform.LookAt(transform.position + facing);
 
         if (Input.GetKeyDown(KeyCode.Space) ||
             Input.GetKeyDown(KeyCode.LeftControl) ||
@@ -50,7 +59,7 @@ public class Player : MonoBehaviour
 
     private void Drop()
     {
-        var rawPos = transform.position + transform.forward;
+        var rawPos = transform.position + facing;
         var dropPosition = new Vector2
         {
             x = (float)Math.Round(rawPos.x),
@@ -71,7 +80,7 @@ public class Player : MonoBehaviour
 
     private void PickUp()
     {
-        var raycastPos = transform.position + transform.forward;
+        var raycastPos = transform.position + facing;
         RaycastHit2D hit = Physics2D.Raycast(raycastPos, transform.forward, 0.2f);
         if (!IsCarrying() && hit.collider != null && hit.collider.gameObject.tag == "Box")
             {
