@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -12,9 +9,34 @@ public class GameManager : MonoBehaviour
     private int missionCounter = 0;
     public int missionPerLevel = 2;
     private Mission mission;
-    public NightTime nightPanel;
+    public NightTimePanel nightPanel;
+    public GameOverPanel gameOverPanel;
     private GameBoard gameBoard;
-    private readonly int ADDED_BOXES_PER_LEVEL = 4;
+    public int boxesAddedPerLevel;
+    public int lifes;
+    public Text lifesText;
+    private float playTime = 0; //Not incremented in menus
+    private bool inMenus = true;
+
+    void Awake()
+    {
+        mission = GetComponent<Mission>();
+        gameBoard = GetComponent<GameBoard>();
+    }
+
+    void Start()
+    {
+        SleepScreen();
+        UpdateLifesText();
+    }
+
+    private void Update()
+    {
+        if(!inMenus)
+        {
+            playTime += Time.deltaTime;
+        }
+    }
 
     internal void PlayerReachedMissionPoint()
     {
@@ -23,6 +45,24 @@ public class GameManager : MonoBehaviour
             missionCounter--;
             NewMission();
         }
+    }
+
+    internal bool TimerExpired()
+    {
+        lifes--;
+        UpdateLifesText();
+        if (lifes > 0)
+            return true;
+        
+        GameOver();
+        return false;
+    }
+
+    private void GameOver()
+    {
+        inMenus = true;
+        gameOverPanel.gameObject.SetActive(true);
+        gameOverPanel.Show(level, playTime);
     }
 
     internal void PlayerWentToBed()
@@ -36,6 +76,7 @@ public class GameManager : MonoBehaviour
 
     private void OnLevelComplete()
     {
+        inMenus = true;
         player.gameObject.SetActive(false);
         SleepScreen();
     }
@@ -46,15 +87,9 @@ public class GameManager : MonoBehaviour
         nightPanel.Show(level);
     }
 
-    void Start()
+    private void UpdateLifesText()
     {
-        SleepScreen();
-    }
-
-    void Awake()
-    {
-        mission = GetComponent<Mission>();
-        gameBoard = GetComponent<GameBoard>();
+        lifesText.text = "Lifes: " + lifes.ToString();
     }
 
     internal void StartNextLevel()
@@ -62,9 +97,10 @@ public class GameManager : MonoBehaviour
         level++;
         missionCounter = missionPerLevel;
         MoveBoxes();
-        gameBoard.AddBoxes(ADDED_BOXES_PER_LEVEL);
+        gameBoard.AddBoxes(boxesAddedPerLevel);
         ActivatePlayer();
         NewMission();
+        inMenus = false;
     }
 
     private void NewMission()

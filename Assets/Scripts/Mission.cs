@@ -13,8 +13,14 @@ public class Mission : MonoBehaviour
     private float timer = -1;
     private int currentTimerInt;
     private bool missionOngoing = false;
+    private GameManager gm;
 
     enum MissionType { North, East, South, West, Bed, None };
+
+    private void Awake()
+    {
+        gm = GetComponent<GameManager>();
+    }
 
     internal void NewMission()
     {
@@ -59,10 +65,13 @@ public class Mission : MonoBehaviour
             {
                 MissionFailed();
 
-                if (currentMission == MissionType.Bed)
-                    BedMission();
-                else
-                    NewMission();
+                if (gm.TimerExpired())
+                {
+                    if (currentMission == MissionType.Bed)
+                        BedMission();
+                    else
+                        NewMission();
+                }
             }
 
             if ((int)timer < currentTimerInt)
@@ -86,6 +95,9 @@ public class Mission : MonoBehaviour
     internal bool MissionCompleted()
     {
         Debug.Assert(currentMission < MissionType.None);
+
+        if (!missionOngoing)
+            return false; // Reached missionLocation same frame as timer expired
 
         if (currentMission != MissionType.Bed)
             missionPoints[(int)currentMission].gameObject.SetActive(false);
