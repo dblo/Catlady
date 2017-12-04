@@ -64,8 +64,10 @@ public class GameManager : MonoBehaviour
 
     internal int GetMissionTime()
     {
-        if (level > 3)
+        if (level >= 10)
             return 8;
+        else if (level > 3)
+            return 10;
         else if (level > 1)
             return 12;
         return 20;

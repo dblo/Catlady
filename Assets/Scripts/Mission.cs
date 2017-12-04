@@ -15,11 +15,60 @@ public class Mission : MonoBehaviour
     private GameManager gm;
     public Player player;
 
+    private string[] familyOccurances =
+    {
+        "What's the fuss over at @'s house?",
+        "So annoying.. I bet those @ kids are causing the ruckus!",
+        "Is that the lunatic Mr. @ walking by?",
+        "Have the @s put up that fence yet?",
+        "Was that the @'s car I heard?",
+    };
+
+    private string[] directionOccurances =
+    {
+          "I thought I heard a strange noice to the @.",
+          "Was that a dog barking near to the @?",
+    };
+
+
     enum MissionType { North, East, South, West, Bed, None };
 
     private void Awake()
     {
         gm = GetComponent<GameManager>();
+    }
+
+    private string GetMissionText()
+    {
+        string msg;
+        if (rng.Next(1) == 0)
+        {
+            msg = familyOccurances[rng.Next(familyOccurances.Length)];
+            string family = DirectionToFamily(currentMission);
+            msg = msg.Replace("@", family);
+        }
+        else
+        {
+            msg = directionOccurances[rng.Next(directionOccurances.Length)];
+            msg = msg.Replace("@", currentMission.ToString().ToLower());
+        }
+        return msg;
+    }
+
+    string DirectionToFamily(MissionType type)
+    {
+        switch (type)
+        {
+            case MissionType.North:
+                return "Northman";
+            case MissionType.East:
+                return "Eastface";
+            case MissionType.South:
+                return "Southerland";
+            case MissionType.West:
+                return "Westfoot";
+        }
+        return "";
     }
 
     internal void NewMission()
@@ -29,7 +78,7 @@ public class Mission : MonoBehaviour
 
         currentMission = (MissionType)newMission;
         missionPoints[(int)currentMission].gameObject.SetActive(true);
-        missionText.text = currentMission.ToString();
+        missionText.text = GetMissionText();
 
         timer = gm.GetMissionTime();
         currentTimerInt = (int)(timer);
@@ -42,7 +91,7 @@ public class Mission : MonoBehaviour
         currentMission = MissionType.Bed;
         missionText.text = "I'm sleepy...";
 
-        timer = gm.GetMissionTime() * 2;
+        timer = gm.GetMissionTime();
         currentTimerInt = (int)(timer);
         timerText.text = currentTimerInt.ToString();
         missionOngoing = true;

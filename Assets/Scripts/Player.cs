@@ -83,11 +83,12 @@ public class Player : MonoBehaviour
         var raycastPos = transform.position + facing;
         RaycastHit2D hit = Physics2D.Raycast(raycastPos, transform.forward, 0.2f);
         if (!IsCarrying() && hit.collider != null && hit.collider.gameObject.tag == "Box")
-            {
-                carriedBox = hit.collider.gameObject;
-                carriedBox.GetComponent<BoxCollider2D>().enabled = false;
-                carriedBox.transform.position = transform.position;
-                carriedBox.transform.parent = transform;
+        {
+            carriedBox = hit.collider.gameObject;
+            carriedBox.GetComponent<BoxCollider2D>().enabled = false;
+            carriedBox.transform.position = Vector3.zero;
+            carriedBox.transform.parent = transform;
+            carriedBox.transform.position = transform.position;
         }
     }
 
