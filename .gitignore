@@ -1,2 +1,8 @@
-*
-!Assets
+*.meta
+.vs
+*csproj.user
+Library
+ProjectSettings
+Temp
+bin
+*.plugins.csproj
