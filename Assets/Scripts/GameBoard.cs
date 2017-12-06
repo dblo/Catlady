@@ -65,8 +65,8 @@ public class GameBoard : MonoBehaviour
 
     internal Vector2 GetRandomWorldCoordWithinOuterWalls()
     {
-        int col = rng.Next(-xOffset + 1, xOffset - 1);
-        int row = rng.Next(-yOffset + 1, yOffset - 1);
+        int col = rng.Next(-xOffset + 1, xOffset);
+        int row = rng.Next(-yOffset + 1, yOffset);
         return new Vector2(col, row);
     }
 
